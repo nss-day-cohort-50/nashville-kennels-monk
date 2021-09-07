@@ -58,11 +58,14 @@ export default ({ employee }) => {
                                 Caring for {animalCount} animals
                             </section>
                             <section>
-                                {resource?.locations?.length > 0 ? `Working at ${resource?.locations.map(
-                                    location => {
-                                        return location.location.name
-                                    }
-                                ).join(" and ")} location.` : `Employee has not been assigned a location yet.`}
+                                {resource?.locations?.length > 0 ?
+                                    `Working at ${resource?.locations.map(
+                                        location => {
+                                            return location.location.name
+                                        }
+                                    ).join(" and ")} location.`
+                                    : `Employee not assigned location.`
+                                }
                             </section>
                         </>
                         : ""
