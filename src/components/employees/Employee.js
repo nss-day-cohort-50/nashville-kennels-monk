@@ -32,8 +32,6 @@ export default ({ employee }) => {
             setCount(resource.animals.length);
         }
     }, [resource])
-    console.log('Resource', resource)
-    console.log('Location', location)
 
     return (
         <article className={classes}>
