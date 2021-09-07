@@ -94,7 +94,7 @@ export const Animal = ({ animal, syncAnimals,
 
                             <h6>Owners</h6>
                             <span className="small">                              
-                                
+                                debugger
                             {currentAnimal.animalOwners?.length>0 ? currentAnimal.animalOwners.map((owner)=>{
                                   return(<p>{owner.user.name}</p>)
                               }):<p>No Owners</p>} 
@@ -139,6 +139,16 @@ export const Animal = ({ animal, syncAnimals,
 
                         </section>
 
+                        {
+                            isEmployee
+                                ? <button className="btn btn-warning mt-3 form-control small" onClick={() =>
+                                    AnimalOwnerRepository
+                                        .removeOwnersAndCaretakers(currentAnimal.id)
+                                        .then(() => {}) // Remove animal
+                                        .then(() => {}) // Get all animals
+                                }>Discharge</button>
+                                : ""
+                        }
                         {
                             isEmployee
                                 ? <button className="btn btn-warning mt-3 form-control small" onClick={() =>
