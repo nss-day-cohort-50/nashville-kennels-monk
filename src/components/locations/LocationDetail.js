@@ -17,10 +17,7 @@ export default () => {
     useEffect(() => {
        LocationRepository.get(locationId).then(set)
     }, [locationId])
-    useEffect(()=>{
-        
-        
-    },[location.employeeLocations])
+    
     return (
         <>
             <div className="jumbotron detailCard">
