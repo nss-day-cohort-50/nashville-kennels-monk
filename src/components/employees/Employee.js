@@ -6,13 +6,12 @@ import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
 import person from "./person.png"
 import "./Employee.css"
 
-
 export default ({ employee }) => {
     const [animalCount, setCount] = useState(0)
     const [location, markLocation] = useState({ name: "" })
     const [classes, defineClasses] = useState("card employee")
     const { employeeId } = useParams()
-    const { getCurrentUser } = useSimpleAuth()
+    // const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
 
     useEffect(() => {
@@ -23,10 +22,18 @@ export default ({ employee }) => {
     }, [])
 
     useEffect(() => {
-        if (resource?.employeeLocations?.length > 0) {
-            markLocation(resource.employeeLocations[0])
+        if (resource?.locations?.length > 0) {
+            markLocation(resource.locations[0].location);
         }
     }, [resource])
+
+    useEffect(() => {
+        if (resource?.animals?.length > 0) {
+            setCount(resource.animals.length);
+        }
+    }, [resource])
+    console.log('Resource', resource)
+    console.log('Location', location)
 
     return (
         <article className={classes}>
@@ -35,7 +42,7 @@ export default ({ employee }) => {
                 <h5 className="card-title">
                     {
                         employeeId
-                            ? resource.name
+                            ? resource?.name
                             : <Link className="card-link"
                                 to={{
                                     pathname: `/employees/${resource.id}`,
@@ -50,17 +57,21 @@ export default ({ employee }) => {
                     employeeId
                         ? <>
                             <section>
-                                Caring for 0 animals
+                                Caring for {animalCount} animals
                             </section>
                             <section>
-                                Working at unknown location
+                                {resource?.locations?.length > 0 ? `Working at ${resource?.locations.map(
+                                    location => {
+                                        return location.location.name
+                                    }
+                                ).join(" and ")} location.` : `Employee has not been assigned a location yet.`}
                             </section>
                         </>
                         : ""
                 }
 
                 {
-                    <button className="btn--fireEmployee" onClick={() => {}}>Fire</button>
+                    <button className="btn--fireEmployee" onClick={() => { }}>Fire</button>
                 }
 
             </section>
