@@ -75,11 +75,17 @@ export default ({ employee }) => {
                                             return location.location.name
                                         }
                                     ).join(" and ")} location.`
-                                    : <select>
+                                    : <select onChange={(event) => {
+                                        let copy = {}
+                                        copy.userId = resource.id
+                                        copy.locationId = parseInt(event.target.value)
+                                        EmployeeRepository.assignEmployee(copy)
+                                            .then(() => resolveResource(employee, employeeId, EmployeeRepository.get))
+                                    }}>
                                         <option disabled selected>Assign to location</option>
                                         {locations.map(
                                             location => {
-                                                return <option key={location.id} onChange={() => { EmployeeRepository.assignEmployee(location.id) }}>
+                                                return <option key={location.id} value={location.id}>
                                                     {location.name}
                                                 </option>
                                             }
