@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Link, useHistory } from "react-router-dom"
 import AnimalRepository from "../../repositories/AnimalRepository";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
@@ -16,37 +16,45 @@ export const NavBar = () => {
 
     const search = (e) => {
         if (e.keyCode === 13) {
-            const terms = document.querySelector("#searchTerms").value
+            
+            
             const foundItems = {
                 animals: [],
                 locations: [],
                 employees: []
             }
-
-            fetch(`${Settings.remoteURL}/users?employee=true&name_like=${encodeURI(terms)}`)
+            if (searchTerms !== ""){
+            fetch(`${Settings.remoteURL}/users?employee=true&name_like=${encodeURI(searchTerms)}`)
                 .then(r => r.json())
                 .then(employees => {
+                    
                     foundItems.employees = employees
-                    return LocationRepository.search(terms)
+                    return LocationRepository.search(searchTerms)
                 })
                 .then(locations => {
                     foundItems.locations = locations
-                    return AnimalRepository.searchByName(encodeURI(terms))
+                    return AnimalRepository.searchByName(encodeURI(searchTerms))
                 })
                 .then(animals => {
                     foundItems.animals = animals
-                    setTerms("")
-                    history.push({
+                    
+                    
+                    return history.push({
                         pathname: "/search",
                         state: foundItems
                     })
-                })
+                })}
         }
         else {
+            
             setTerms(e.target.value)
         }
     }
-
+    useEffect(() => {
+        setTerms("")
+        
+        
+    }, [])
     return (
         <div className="container">
             <nav className="navbar navbar-expand-sm navbar-light bg-light fixed-top onTop">
