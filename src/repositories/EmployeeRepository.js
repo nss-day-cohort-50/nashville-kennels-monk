@@ -11,8 +11,7 @@ export default {
                 userWithRelationships.animals = data
                 return userWithRelationships
             })
-    }
-    ,
+    },
     async delete(id) {
         return await fetchIt(`${Settings.remoteURL}/users/${id}`, "DELETE")
     },

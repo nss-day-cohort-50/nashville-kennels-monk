@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import EmployeeRepository from "../../repositories/EmployeeRepository";
 import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
 import person from "./person.png"
 import "./Employee.css"
 
-export default ({ employee }) => {
+export default ({ employee, updateEmployees }) => {
     const [animalCount, setCount] = useState(0)
     const [location, markLocation] = useState({ name: "" })
     const [classes, defineClasses] = useState("card employee")
     const { employeeId } = useParams()
     // const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
+    const history = useHistory()
 
     useEffect(() => {
         if (employeeId) {
@@ -32,6 +34,7 @@ export default ({ employee }) => {
             setCount(resource.animals.length);
         }
     }, [resource])
+
 
     return (
         <article className={classes}>
@@ -58,22 +61,36 @@ export default ({ employee }) => {
                                 Caring for {animalCount} animals
                             </section>
                             <section>
-                                {resource?.locations?.length > 0 ? `Working at ${resource?.locations.map(
-                                    location => {
-                                        return location.location.name
-                                    }
-                                ).join(" and ")} location.` : `Employee has not been assigned a location yet.`}
+                                {resource?.locations?.length > 0 ?
+                                    `Working at ${resource?.locations.map(
+                                        location => {
+                                            return location.location.name
+                                        }
+                                    ).join(" and ")} location.`
+                                    : `Employee not assigned location.`
+                                }
                             </section>
                         </>
                         : ""
                 }
 
                 {
-                    <button className="btn--fireEmployee" onClick={() => { }}>Fire</button>
+                    employeeId
+                        ?
+                        <button className="btn--fireEmployee" onClick={() => {
+                            EmployeeRepository.delete(employeeId).then(
+                                history.push('/employees')
+                            )
+                        }}>Fire</button>
+                        : <button className="btn--fireEmployee" onClick={() => {
+                            EmployeeRepository.delete(resource?.id)
+                                .then(EmployeeRepository.getAll)
+                                .then((data) => updateEmployees(data))
+                        }}>Fire</button>
                 }
 
             </section>
 
-        </article>
+        </article >
     )
 }
