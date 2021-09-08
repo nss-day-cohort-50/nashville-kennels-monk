@@ -4,6 +4,7 @@ import AnimalRepository from "../../repositories/AnimalRepository";
 import AnimalOwnerRepository from "../../repositories/AnimalOwnerRepository";
 import OwnerRepository from "../../repositories/OwnerRepository";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
+import EmployeeRepository from "../../repositories/EmployeeRepository";
 import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import "./AnimalCard.css"
 
@@ -12,7 +13,9 @@ export const Animal = ({ animal, syncAnimals,
     const [detailsOpen, setDetailsOpen] = useState(false)
     const [isEmployee, setAuth] = useState(false)
     const [myOwners, setPeople] = useState([])
+    const [CareTakers, setCaretaker ] = useState([])
     const [allOwners, registerOwners] = useState([])
+    const [allCareTakers, registerCaretakers ] = useState([])
     const [classes, defineClasses] = useState("card animal")
     const { getCurrentUser } = useSimpleAuth()
     const history = useHistory()
@@ -30,8 +33,25 @@ export const Animal = ({ animal, syncAnimals,
         }
     }, [owners])
 
+    useEffect(() => {
+        EmployeeRepository.getAll()
+            .then((data)=>{ debugger 
+                const filterCareTakers = data.filter((item)=> item.employeeLocations.locationId === animal.locationId)
+                setCaretaker(filterCareTakers) 
+            })
+               
+    }, [])
+
+
+
     const getPeople = () => {
         return AnimalOwnerRepository
+            .getOwnersByAnimal(currentAnimal.id)
+            .then(people => setPeople(people))
+    }
+
+    const getCareTakers = () => {
+        return AnimalOwnerRepository//Chcek source (maybe animalrepository)
             .getOwnersByAnimal(currentAnimal.id)
             .then(people => setPeople(people))
     }
@@ -85,17 +105,31 @@ export const Animal = ({ animal, syncAnimals,
                             <h6>Caretaker(s)</h6>
                             <span className="small">
                             {currentAnimal.animalCaretakers?.length>0 ? currentAnimal.animalCaretakers.map((caretaker)=>{
+                                  console.log(CareTakers)
                                   return(<p>{caretaker.user.name}</p>)
-                                                                                    
-                              }):<p>No Caretaker</p>} 
-                                
+                                }):<p>No Caretaker</p>}                                                       
+                                                       
                             </span>
+                            {
+                                currentAnimal.animalCaretakers?.length < 2
+                                    ? <select defaultValue=""
+                                        name="caretaker"
+                                        className="form-control small"
+                                        onChange={() => {}} >
+                                        <option value="">
+                                            Select {currentAnimal.animalCaretakers.length === 1 ? "another" : "a"} Caretaker
+                                        </option>
+                                        {
+                                            allCareTakers.map(ct => <option key={ct.id} value={ct.id}>{ct.name}</option>)
+                                        }
+                                    </select>
+                                    : null
+                            }
 
 
                             <h6>Owners</h6>
                             <span className="small">                              
-                                debugger
-                            {currentAnimal.animalOwners?.length>0 ? currentAnimal.animalOwners.map((owner)=>{
+                                                           {currentAnimal.animalOwners?.length>0 ? currentAnimal.animalOwners.map((owner)=>{
                                   return(<p>{owner.user.name}</p>)
                               }):<p>No Owners</p>} 
                                 {/* Honey Rae Repairs */}
