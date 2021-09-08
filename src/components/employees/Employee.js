@@ -13,7 +13,8 @@ export default ({ employee }) => {
     const [locations, setLocations] = useState([])
     const [classes, defineClasses] = useState("card employee")
     const { employeeId } = useParams()
-    // const { getCurrentUser } = useSimpleAuth()
+    const { getCurrentUser } = useSimpleAuth()
+    const currentUser = getCurrentUser()
     const { resolveResource, resource } = useResourceResolver()
     useEffect(() => {
         if (employeeId) {
@@ -43,8 +44,7 @@ export default ({ employee }) => {
         }, []
     )
 
-
-    console.log(locations)
+    console.log(currentUser)
     return (
         <article className={classes}>
             <section className="card-body">
@@ -75,7 +75,8 @@ export default ({ employee }) => {
                                             return location.location.name
                                         }
                                     ).join(" and ")} location.`
-                                    : <select onChange={(event) => {
+                                    : (resource?.locations?.length > 0 && currentUser.employee === true) ?
+                                    <select onChange={(event) => {
                                         let copy = {}
                                         copy.userId = resource.id
                                         copy.locationId = parseInt(event.target.value)
@@ -90,7 +91,7 @@ export default ({ employee }) => {
                                                 </option>
                                             }
                                         )}
-                                    </select>
+                                    </select> : ''
                                 }
                             </section>
                         </>
