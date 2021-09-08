@@ -9,7 +9,6 @@ import LocationRepository from "../../repositories/LocationRepository";
 
 export default ({ employee }) => {
     const [animalCount, setCount] = useState(0)
-    const [location, markLocation] = useState({ name: "" })
     const [locations, setLocations] = useState([])
     const [classes, defineClasses] = useState("card employee")
     const { employeeId } = useParams()
@@ -22,12 +21,6 @@ export default ({ employee }) => {
         }
         resolveResource(employee, employeeId, EmployeeRepository.get)
     }, [])
-
-    useEffect(() => {
-        if (resource?.locations?.length > 0) {
-            markLocation(resource.locations[0].location);
-        }
-    }, [resource])
 
     useEffect(() => {
         if (resource?.animals?.length > 0) {
@@ -82,7 +75,7 @@ export default ({ employee }) => {
                                             EmployeeRepository.assignEmployee(copy)
                                                 .then(() => resolveResource(employee, employeeId, EmployeeRepository.get))
                                         }}>
-                                            <option disabled selected>Assign to location</option>
+                                            <option>Assign to location</option>
                                             {locations.map(
                                                 location => {
                                                     return <option key={location.id} value={location.id}>
