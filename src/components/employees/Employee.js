@@ -44,7 +44,6 @@ export default ({ employee }) => {
         }, []
     )
 
-    console.log(currentUser)
     return (
         <article className={classes}>
             <section className="card-body">
@@ -75,30 +74,30 @@ export default ({ employee }) => {
                                             return location.location.name
                                         }
                                     ).join(" and ")} location.`
-                                    : (resource?.locations?.length > 0 && currentUser.employee === true) ?
-                                    <select onChange={(event) => {
-                                        let copy = {}
-                                        copy.userId = resource.id
-                                        copy.locationId = parseInt(event.target.value)
-                                        EmployeeRepository.assignEmployee(copy)
-                                            .then(() => resolveResource(employee, employeeId, EmployeeRepository.get))
-                                    }}>
-                                        <option disabled selected>Assign to location</option>
-                                        {locations.map(
-                                            location => {
-                                                return <option key={location.id} value={location.id}>
-                                                    {location.name}
-                                                </option>
-                                            }
-                                        )}
-                                    </select> : ''
+                                    : (currentUser.employee === true) ?
+                                        <select onChange={(event) => {
+                                            let copy = {}
+                                            copy.userId = resource.id
+                                            copy.locationId = parseInt(event.target.value)
+                                            EmployeeRepository.assignEmployee(copy)
+                                                .then(() => resolveResource(employee, employeeId, EmployeeRepository.get))
+                                        }}>
+                                            <option disabled selected>Assign to location</option>
+                                            {locations.map(
+                                                location => {
+                                                    return <option key={location.id} value={location.id}>
+                                                        {location.name}
+                                                    </option>
+                                                }
+                                            )}
+                                        </select> : ''
                                 }
                             </section>
                         </>
                         : ""
                 }
 
-                {<button className="btn--fireEmployee" onClick={() => { }}>Fire</button>}
+                {currentUser.employee === true ? <button className="btn--fireEmployee" onClick={() => { }}>Fire</button> : ""}
 
             </section>
 
