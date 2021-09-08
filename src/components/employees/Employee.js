@@ -32,6 +32,7 @@ export default ({ employee }) => {
             setCount(resource.animals.length);
         }
     }, [resource])
+    
 
     return (
         <article className={classes}>
@@ -72,7 +73,7 @@ export default ({ employee }) => {
                 }
 
                 {
-                    <button className="btn--fireEmployee" onClick={() => { }}>Fire</button>
+                    <button className="btn--fireEmployee" onClick={() => { EmployeeRepository.delete(employeeId) }}>Fire</button>
                 }
 
             </section>
