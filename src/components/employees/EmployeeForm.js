@@ -1,11 +1,16 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import EmployeeRepository from "../../repositories/EmployeeRepository";
+import LocationRepository from "../../repositories/LocationRepository";
 import "./EmployeeForm.css"
-
 
 export default (props) => {
     const [employee, updateEmployee] = useState()
     const [locations, defineLocations] = useState([])
+
+    useEffect(() => {
+        LocationRepository.getAll()
+            .then((data) => defineLocations(data))
+    }, [])
 
     const constructNewEmployee = () => {
         if (employee.locationId === 0) {
@@ -15,18 +20,18 @@ export default (props) => {
                 name: employee.name,
                 employee: true
             })
-            .then(employee => {
-                EmployeeRepository.assignEmployee({
-                    employeeId: employee.id,
-                    locationId: employee.location
+                .then(employee => {
+                    EmployeeRepository.assignEmployee({
+                        employeeId: employee.id,
+                        locationId: employee.location
+                    })
                 })
-            })
-            .then(() => props.history.push("/employees"))
+                .then(() => props.history.push("/employees"))
         }
     }
 
     const handleUserInput = (event) => {
-        const copy = {...employee}
+        const copy = { ...employee }
         copy[event.target.id] = event.target.value
         updateEmployee(copy)
     }
