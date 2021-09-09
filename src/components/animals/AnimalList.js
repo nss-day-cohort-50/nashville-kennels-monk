@@ -18,6 +18,7 @@ export const AnimalListComponent = (props) => {
     const [owners, updateOwners] = useState([])
     const [currentAnimal, setCurrentAnimal] = useState({ treatments: [] })
     const { getCurrentUser } = useSimpleAuth()
+    const user = getCurrentUser()
     const history = useHistory()
     let { toggleDialog, modalIsOpen } = useModal("#dialog--animal")
 
@@ -48,7 +49,6 @@ export const AnimalListComponent = (props) => {
         return () => window.removeEventListener("keyup", handler)
     }, [toggleDialog, modalIsOpen])
 
-
     return (
         <>
             <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} />
@@ -57,26 +57,40 @@ export const AnimalListComponent = (props) => {
             {
                 getCurrentUser().employee
                     ? <div className="centerChildren btn--newResource">
-                    <button type="button"
-                        className="btn btn-success "
-                        onClick={() => { history.push("/animals/new") }}>
-                        Register Animal
-                    </button>
-                </div>
+                        <button type="button"
+                            className="btn btn-success "
+                            onClick={() => { history.push("/animals/new") }}>
+                            Register Animal
+                        </button>
+                    </div>
                     : ""
             }
-
-
+            {console.log(user)}
+            {console.log(animals)}
             <ul className="animals">
                 {
-                    animals.map(anml =>
-                        <Animal key={`animal--${anml.id}`} animal={anml}
-                            animalOwners={animalOwners}
-                            owners={owners}
-                            syncAnimals={syncAnimals}
-                            setAnimalOwners={setAnimalOwners}
-                            showTreatmentHistory={showTreatmentHistory}
-                        />)
+                    user.employee === true ?
+                        animals.map(animal =>
+                            <Animal key={`animal--${animal.id}`} animal={animal}
+                                animalOwners={animalOwners}
+                                owners={owners}
+                                syncAnimals={syncAnimals}
+                                setAnimalOwners={setAnimalOwners}
+                                showTreatmentHistory={showTreatmentHistory}
+                            />
+                        )
+                        :
+                        animals.map(animal =>
+                            animal.animalOwners[0]?.userId === user.id ||
+                                animal.animalOwners[1]?.userId === user.id ?
+                                <Animal key={`animal--${animal.id}`} animal={animal}
+                                    animalOwners={animalOwners}
+                                    owners={owners}
+                                    syncAnimals={syncAnimals}
+                                    setAnimalOwners={setAnimalOwners}
+                                    showTreatmentHistory={showTreatmentHistory}
+                                /> : ''
+                        )
                 }
             </ul>
         </>
