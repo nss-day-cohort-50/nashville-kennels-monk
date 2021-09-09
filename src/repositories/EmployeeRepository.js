@@ -4,13 +4,23 @@ import { fetchIt } from "./Fetch"
 export default {
     async get(id) {
         const userLocations = await fetchIt(`${Settings.remoteURL}/employeeLocations?userId=${id}&_expand=location&_expand=user`)
+        const user = await fetchIt(`${Settings.remoteURL}/users?id=${id}`)
         return await fetchIt(`${Settings.remoteURL}/animalCaretakers?userId=${id}&_expand=animal`)
-            .then(data => {
-                const userWithRelationships = userLocations[0].user
-                userWithRelationships.locations = userLocations
-                userWithRelationships.animals = data
-                return userWithRelationships
-            })
+            .then(
+                userLocations.length > 0
+                    ?
+                    data => () => {
+                        const userWithRelationships = userLocations[0].user
+                        userWithRelationships.locations = userLocations
+                        userWithRelationships.animals = data
+                        return userWithRelationships
+                    }
+                    : data => () => {
+                        const userWithRelationships = user[0]
+                        userWithRelationships.animals = data
+                        return userWithRelationships
+                    }
+            )
     },
     async delete(id) {
         return await fetchIt(`${Settings.remoteURL}/users/${id}`, "DELETE")

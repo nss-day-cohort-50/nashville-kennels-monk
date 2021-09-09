@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
-import { useHistory } from "react-router-dom";
 import EmployeeRepository from "../../repositories/EmployeeRepository";
 import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
 import person from "./person.png"
 import "./Employee.css"
+import LocationRepository from "../../repositories/LocationRepository";
 
-export default ({ employee, updateEmployees }) => {
+export default ({ employee }) => {
     const [animalCount, setCount] = useState(0)
-    const [location, markLocation] = useState({ name: "" })
+    const [locations, setLocations] = useState([])
     const [classes, defineClasses] = useState("card employee")
     const { employeeId } = useParams()
-    // const { getCurrentUser } = useSimpleAuth()
+    const { getCurrentUser } = useSimpleAuth()
+    const currentUser = getCurrentUser()
     const { resolveResource, resource } = useResourceResolver()
-    const history = useHistory()
-
     useEffect(() => {
         if (employeeId) {
             defineClasses("card employee--single")
@@ -24,17 +23,19 @@ export default ({ employee, updateEmployees }) => {
     }, [])
 
     useEffect(() => {
-        if (resource?.locations?.length > 0) {
-            markLocation(resource.locations[0].location);
-        }
-    }, [resource])
-
-    useEffect(() => {
         if (resource?.animals?.length > 0) {
             setCount(resource.animals.length);
         }
     }, [resource])
 
+    useEffect(
+        () => {
+            LocationRepository.getAll()
+                .then((data) => {
+                    setLocations(data)
+                })
+        }, []
+    )
 
     return (
         <article className={classes}>
@@ -51,7 +52,6 @@ export default ({ employee, updateEmployees }) => {
                                 }}>
                                 {resource.name}
                             </Link>
-
                     }
                 </h5>
                 {
@@ -67,30 +67,33 @@ export default ({ employee, updateEmployees }) => {
                                             return location.location.name
                                         }
                                     ).join(" and ")} location.`
-                                    : `Employee not assigned location.`
+                                    : (currentUser.employee === true) ?
+                                        <select onChange={(event) => {
+                                            let copy = {}
+                                            copy.userId = resource.id
+                                            copy.locationId = parseInt(event.target.value)
+                                            EmployeeRepository.assignEmployee(copy)
+                                                .then(() => resolveResource(employee, employeeId, EmployeeRepository.get))
+                                        }}>
+                                            <option>Assign to location</option>
+                                            {locations.map(
+                                                location => {
+                                                    return <option key={location.id} value={location.id}>
+                                                        {location.name}
+                                                    </option>
+                                                }
+                                            )}
+                                        </select> : ''
                                 }
                             </section>
                         </>
                         : ""
                 }
 
-                {
-                    employeeId
-                        ?
-                        <button className="btn--fireEmployee" onClick={() => {
-                            EmployeeRepository.delete(employeeId).then(
-                                history.push('/employees')
-                            )
-                        }}>Fire</button>
-                        : <button className="btn--fireEmployee" onClick={() => {
-                            EmployeeRepository.delete(resource?.id)
-                                .then(EmployeeRepository.getAll)
-                                .then((data) => updateEmployees(data))
-                        }}>Fire</button>
-                }
+                {currentUser.employee === true ? <button className="btn--fireEmployee" onClick={() => { }}>Fire</button> : ""}
 
             </section>
 
-        </article >
+        </article>
     )
 }
