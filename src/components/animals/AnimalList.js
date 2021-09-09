@@ -20,6 +20,7 @@ export const AnimalListComponent = (props) => {
     const { getCurrentUser } = useSimpleAuth()
     const history = useHistory()
     let { toggleDialog, modalIsOpen } = useModal("#dialog--animal")
+    let [treatmentDisplay, setTreatmentDisplay] = useState(false)
 
     const syncAnimals = () => {
         AnimalRepository.getAll().then(data => petAnimals(data))
@@ -30,16 +31,26 @@ export const AnimalListComponent = (props) => {
         AnimalOwnerRepository.getAll().then(setAnimalOwners)
         syncAnimals()
     }, [])
+    
 
     const showTreatmentHistory = animal => {
+        setTreatmentDisplay(true)
+        setCurrentAnimal(animal)
+        toggleDialog()
+    }
+    const showTreatmentForm = animal => {
+        setTreatmentDisplay(false)
         setCurrentAnimal(animal)
         toggleDialog()
     }
 
     useEffect(() => {
+        
         const handler = e => {
             if (e.keyCode === 27 && modalIsOpen) {
                 toggleDialog()
+                
+                
             }
         }
 
@@ -51,8 +62,7 @@ export const AnimalListComponent = (props) => {
 
     return (
         <>
-            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} />
-
+            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} treatment={treatmentDisplay} sync={syncAnimals}/>
 
             {
                 getCurrentUser().employee
@@ -76,6 +86,7 @@ export const AnimalListComponent = (props) => {
                             syncAnimals={syncAnimals}
                             setAnimalOwners={setAnimalOwners}
                             showTreatmentHistory={showTreatmentHistory}
+                            showTreatmentForm={showTreatmentForm}
                         />)
                 }
             </ul>

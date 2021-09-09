@@ -8,7 +8,7 @@ import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import "./AnimalCard.css"
 
 export const Animal = ({ animal, syncAnimals,
-    showTreatmentHistory, owners }) => {
+    showTreatmentHistory,showTreatmentForm, owners }) => {
     const [detailsOpen, setDetailsOpen] = useState(false)
     const [isEmployee, setAuth] = useState(false)
     const [myOwners, setPeople] = useState([])
@@ -132,12 +132,14 @@ console.log('currentAnimal', currentAnimal)
 
                         {
                             isEmployee
-                                ? <button className="btn btn-warning mt-3 form-control small" onClick={() =>
+                                ?<><button className="btn btn-warning mt-3 form-control small" onClick={()=>showTreatmentForm(currentAnimal)
+                                }>Add Treatment</button> 
+                                <button className="btn btn-warning mt-3 form-control small" onClick={() =>
                                     AnimalOwnerRepository
                                         .removeOwnersAndCaretakers(currentAnimal.id)
                                         .then(() => {AnimalRepository.delete(currentAnimal.id)}) // Remove animal
                                         .then(() => {syncAnimals()}) // Get all animals
-                                }>Discharge</button>
+                                }>Discharge</button></>
                                 : ""
                         }
 
