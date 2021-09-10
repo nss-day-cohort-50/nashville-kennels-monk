@@ -56,5 +56,12 @@ export default {
             "PUT",
             JSON.stringify(editedAnimal)
         )
+    },
+    async addTreatment(treatmentObject) {
+        return await fetchIt(
+            `${Settings.remoteURL}/treatments`,
+            "POST",
+            JSON.stringify(treatmentObject)
+        )
     }
 }

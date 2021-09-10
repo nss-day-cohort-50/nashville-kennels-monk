@@ -23,6 +23,7 @@ export default ({ employee }) => {
     }, [])
 
     useEffect(() => {
+        
         if (resource?.animals?.length > 0) {
             setCount(resource.animals.length);
         }
