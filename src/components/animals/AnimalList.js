@@ -21,7 +21,6 @@ export const AnimalListComponent = (props) => {
     const history = useHistory()
     let { toggleDialog, modalIsOpen } = useModal("#dialog--animal")
     let [treatmentDisplay, setTreatmentDisplay] = useState(false)
-
     const syncAnimals = () => {
         AnimalRepository.getAll().then(data => petAnimals(data))
     }
@@ -32,11 +31,12 @@ export const AnimalListComponent = (props) => {
         syncAnimals()
     }, [])
     
-
+    
     const showTreatmentHistory = animal => {
         setTreatmentDisplay(true)
         setCurrentAnimal(animal)
         toggleDialog()
+        
     }
     const showTreatmentForm = animal => {
         setTreatmentDisplay(false)
@@ -62,7 +62,7 @@ export const AnimalListComponent = (props) => {
 
     return (
         <>
-            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} treatment={treatmentDisplay} sync={syncAnimals}/>
+            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} treatment={treatmentDisplay} sync={()=>syncAnimals()}/>
 
             {
                 getCurrentUser().employee

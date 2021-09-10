@@ -18,7 +18,7 @@ export const Animal = ({ animal, syncAnimals,
     const history = useHistory()
     const { animalId } = useParams()
     const { resolveResource, resource: currentAnimal } = useResourceResolver()
-console.log('currentAnimal', currentAnimal)
+
     useEffect(() => {
         setAuth(getCurrentUser().employee)
         resolveResource(animal, animalId, AnimalRepository.get)
@@ -38,6 +38,7 @@ console.log('currentAnimal', currentAnimal)
 
     useEffect(() => {
         getPeople()
+        console.log(currentAnimal)
     }, [currentAnimal])
 
     useEffect(() => {
@@ -66,7 +67,9 @@ console.log('currentAnimal', currentAnimal)
                                 }}
                                 onClick={() => {
                                     if (isEmployee) {
-                                        showTreatmentHistory(currentAnimal)
+                                        
+                                         showTreatmentHistory(currentAnimal)
+                                        
                                     }
                                     else {
                                         history.push(`/animals/${currentAnimal.id}`)
@@ -132,7 +135,7 @@ console.log('currentAnimal', currentAnimal)
 
                         {
                             isEmployee
-                                ?<><button className="btn btn-warning mt-3 form-control small" onClick={()=>showTreatmentForm(currentAnimal)
+                                ?<><button className="btn btn-warning mt-3 form-control small" onClick={()=>history.push(`/addtreatment/${currentAnimal.id}`)
                                 }>Add Treatment</button> 
                                 <button className="btn btn-warning mt-3 form-control small" onClick={() =>
                                     AnimalOwnerRepository
