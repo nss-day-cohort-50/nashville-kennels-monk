@@ -37,25 +37,27 @@ export default ({ employee }) => {
                 })
         }, []
     )
-
+console.log(employee)
     return (
         <article className={classes}>
             <section className="card-body">
                 <img alt="Kennel employee icon" src={person} className="icon--person" />
-                <h5 className="card-title">
-                    {
-                        employeeId
-                            ? resource?.name
-                            : <Link className="card-link"
+
+                {
+                    employeeId
+                        ? resource?.name
+                        : <><h5 className="card-title">
+                            <Link className="card-link"
                                 to={{
                                     pathname: `/employees/${resource.id}`,
                                     state: { employee: resource }
                                 }}>
                                 {resource.name}
                             </Link>
-                    }
-                </h5>
-                
+                        </h5>
+                        </>
+                }
+
                 {
                     employeeId
                         ? <>
