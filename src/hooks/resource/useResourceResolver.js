@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const useResourceResolver = () => {
 
     const [resource, setResource] = useState({})
 
-    useEffect(() => {
-       console.log('resolved resource', resource)
-    }, [resource])
+
 
     const resolveResource = (property, param, getter) => {
         // Resource passed as prop

@@ -10,6 +10,9 @@ export default () => {
     useEffect(
         () => {
             EmployeeRepository.getAll()
+            .then(emps => {
+                setEmployees(emps)
+            })
         }, []
     )
 
@@ -17,7 +20,7 @@ export default () => {
         <>
             <div className="employees">
                 {
-                    emps.map(a => <Employee key={a.id} employee={a} />)
+                    emps.map(a => <Employee key={a.id} employee={a} updateEmployees={setEmployees} />)
                 }
             </div>
         </>

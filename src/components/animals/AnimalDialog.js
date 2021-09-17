@@ -1,7 +1,8 @@
-import React from "react"
+import React, {useState} from "react"
 
 export const AnimalDialog = ({toggleDialog, animal}) => {
-    return (
+    
+    return <>
         <dialog id="dialog--animal" className="dialog--animal">
             <h2 style={{ marginBottom: "1.3em" }}>Medical History for {animal.name}</h2>
             {
@@ -20,5 +21,8 @@ export const AnimalDialog = ({toggleDialog, animal}) => {
                 id="closeBtn"
                 onClick={toggleDialog}>close</button>
         </dialog>
-    )
+        
+        
+    
+    </>
 }

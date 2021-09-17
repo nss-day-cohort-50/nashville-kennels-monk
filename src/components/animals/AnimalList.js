@@ -18,9 +18,10 @@ export const AnimalListComponent = (props) => {
     const [owners, updateOwners] = useState([])
     const [currentAnimal, setCurrentAnimal] = useState({ treatments: [] })
     const { getCurrentUser } = useSimpleAuth()
+    const user = getCurrentUser()
     const history = useHistory()
     let { toggleDialog, modalIsOpen } = useModal("#dialog--animal")
-
+    let [treatmentDisplay, setTreatmentDisplay] = useState(false)
     const syncAnimals = () => {
         AnimalRepository.getAll().then(data => petAnimals(data))
     }
@@ -30,16 +31,27 @@ export const AnimalListComponent = (props) => {
         AnimalOwnerRepository.getAll().then(setAnimalOwners)
         syncAnimals()
     }, [])
-
+    
+    
     const showTreatmentHistory = animal => {
+        setTreatmentDisplay(true)
+        setCurrentAnimal(animal)
+        toggleDialog()
+        
+    }
+    const showTreatmentForm = animal => {
+        setTreatmentDisplay(false)
         setCurrentAnimal(animal)
         toggleDialog()
     }
 
     useEffect(() => {
+        
         const handler = e => {
             if (e.keyCode === 27 && modalIsOpen) {
                 toggleDialog()
+                
+                
             }
         }
 
@@ -48,35 +60,47 @@ export const AnimalListComponent = (props) => {
         return () => window.removeEventListener("keyup", handler)
     }, [toggleDialog, modalIsOpen])
 
-
     return (
         <>
-            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} />
-
+            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} treatment={treatmentDisplay} sync={()=>syncAnimals()}/>
 
             {
                 getCurrentUser().employee
-                    ? ""
-                    : <div className="centerChildren btn--newResource">
+                    ? <div className="centerChildren btn--newResource">
                         <button type="button"
                             className="btn btn-success "
                             onClick={() => { history.push("/animals/new") }}>
                             Register Animal
                         </button>
                     </div>
+                    : ""
             }
-
-
+            {console.log(user)}
+            {console.log(animals)}
             <ul className="animals">
                 {
-                    animals.map(anml =>
-                        <Animal key={`animal--${anml.id}`} animal={anml}
-                            animalOwners={animalOwners}
-                            owners={owners}
-                            syncAnimals={syncAnimals}
-                            setAnimalOwners={setAnimalOwners}
-                            showTreatmentHistory={showTreatmentHistory}
-                        />)
+                    user.employee === true ?
+                        animals.map(animal =>
+                            <Animal key={`animal--${animal.id}`} animal={animal}
+                                animalOwners={animalOwners}
+                                owners={owners}
+                                syncAnimals={syncAnimals}
+                                setAnimalOwners={setAnimalOwners}
+                                showTreatmentHistory={showTreatmentHistory}
+                            />
+                        )
+                        :
+                        animals.map(animal =>
+                            animal.animalOwners[0]?.userId === user.id ||
+                                animal.animalOwners[1]?.userId === user.id ?
+                                <Animal key={`animal--${animal.id}`} animal={animal}
+                                    animalOwners={animalOwners}
+                                    owners={owners}
+                                    syncAnimals={syncAnimals}
+                                    setAnimalOwners={setAnimalOwners}
+                                    showTreatmentHistory={showTreatmentHistory}
+                                /> : ''
+                        )
                 }
             </ul>
         </>

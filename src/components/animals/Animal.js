@@ -8,7 +8,7 @@ import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import "./AnimalCard.css"
 
 export const Animal = ({ animal, syncAnimals,
-    showTreatmentHistory, owners }) => {
+    showTreatmentHistory,showTreatmentForm, owners }) => {
     const [detailsOpen, setDetailsOpen] = useState(false)
     const [isEmployee, setAuth] = useState(false)
     const [myOwners, setPeople] = useState([])
@@ -38,6 +38,7 @@ export const Animal = ({ animal, syncAnimals,
 
     useEffect(() => {
         getPeople()
+        console.log(currentAnimal)
     }, [currentAnimal])
 
     useEffect(() => {
@@ -66,7 +67,9 @@ export const Animal = ({ animal, syncAnimals,
                                 }}
                                 onClick={() => {
                                     if (isEmployee) {
-                                        showTreatmentHistory(currentAnimal)
+                                        
+                                         showTreatmentHistory(currentAnimal)
+                                        
                                     }
                                     else {
                                         history.push(`/animals/${currentAnimal.id}`)
@@ -132,12 +135,14 @@ export const Animal = ({ animal, syncAnimals,
 
                         {
                             isEmployee
-                                ? <button className="btn btn-warning mt-3 form-control small" onClick={() =>
+                                ?<><button className="btn btn-warning mt-3 form-control small" onClick={()=>history.push(`/addtreatment/${currentAnimal.id}`)
+                                }>Add Treatment</button> 
+                                <button className="btn btn-warning mt-3 form-control small" onClick={() =>
                                     AnimalOwnerRepository
                                         .removeOwnersAndCaretakers(currentAnimal.id)
-                                        .then(() => {}) // Remove animal
-                                        .then(() => {}) // Get all animals
-                                }>Discharge</button>
+                                        .then(() => {AnimalRepository.delete(currentAnimal.id)}) // Remove animal
+                                        .then(() => {syncAnimals()}) // Get all animals
+                                }>Discharge</button></>
                                 : ""
                         }
 
